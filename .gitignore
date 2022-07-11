@@ -1,0 +1,9 @@
+# Editors
+.vscode/
+
+# Python stuff
+
+__pycache__/
+
+#sqLite
+*.sqLite3
