@@ -10,6 +10,8 @@ flake8 = "*"
 isort = "*"
 pre-commit = "*"
 pylance = "*"
+requests = "*"
+django-http-method = "*"
 
 [dev-packages]
 
