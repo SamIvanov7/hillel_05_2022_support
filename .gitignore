@@ -4,6 +4,7 @@
 # Python stuff
 
 __pycache__/
+data.json
 
 #sqLite
 *.sqLite3
