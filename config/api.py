@@ -77,6 +77,6 @@ def btc_usd(request):
 
 def history(request):
     data = ExchangeRatesHistory.as_dict()
-    with open("data.json", "w") as outfile:
+    with open("history.json", "w") as outfile:
         json.dump(data, outfile, indent=4)
     return JsonResponse(ExchangeRatesHistory.as_dict())
