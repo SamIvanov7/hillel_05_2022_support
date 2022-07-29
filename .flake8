@@ -1,3 +1,4 @@
 [flake8]
 ignore = D203
 max-line-length = 130
+exclude = .venv,env,venv,migrations
