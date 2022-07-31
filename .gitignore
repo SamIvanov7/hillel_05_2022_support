@@ -4,6 +4,8 @@
 # Python stuff
 
 __pycache__/
+
+# other
 history.json
 
 #sqLite
