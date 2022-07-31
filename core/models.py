@@ -69,3 +69,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = EMAIL_FIELD
     REQUIRED_FIELDS = []
+
+    class Meta:
+        verbose_name_plural = "Hello"
