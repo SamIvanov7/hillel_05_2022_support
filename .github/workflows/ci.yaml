@@ -22,7 +22,7 @@ jobs:
     - name: Run black
       uses: VaultVulp/action-pipenv@v2.0.1
       with:
-        command: run black --check ./
+        command: run black ./
         
     - name: Run isort
       uses: VaultVulp/action-pipenv@v2.0.1
