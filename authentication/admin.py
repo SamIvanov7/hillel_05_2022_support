@@ -13,5 +13,4 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
-    exclude = ["user_permissions", "groups"]
-    readonly_fields = ["password", "last_login"]
+    pass
