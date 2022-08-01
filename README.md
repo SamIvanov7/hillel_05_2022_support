@@ -1,5 +1,3 @@
-[![Builds Status](https://github.com/SemenIvanov7/hillel_05_2022_support/actions/workflows/ci.yml/badge.svg?)](https://github.com/SemenIvanov7/hillel_05_2022_support/actions/workflows/ci.yml)
-
 
 # Project: Support application
 
