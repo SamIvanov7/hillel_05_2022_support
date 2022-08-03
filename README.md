@@ -11,6 +11,12 @@ specialists of service with users issues.
 $pip instal pipenv
 ```
 
+#### Install [pre-commit hooks](https://pre-commit.com/#install)
+> Note: Install pre-commit tool before
+```bash
+pre-commit install
+```
+
 ## Description 
 
 #### Authentication
@@ -61,6 +67,12 @@ App can save information in history file and make output respose in json format 
 
 #### /hillel_05_2022_support/.gitignore
  - GitHub ignore file
+
+#### /.pre-commit-config.yaml
+ - describes installed repositories and hooks
+
+#### /.pyproject.toml
+ - config file which is used for isort & black for normal working without conflicts
 
 #### migration/ 
 - referred to here as “migration files”. These files are actually normal Python files with an agreed-upon object layout, written in a declarative style. What Django looks for when it loads a migration file (as a Python module) is a subclass of django.db.migrations.Migration called Migration. It then inspects this object for four attributes, only two of which are used most of the time:
