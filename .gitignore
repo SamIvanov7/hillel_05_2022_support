@@ -10,6 +10,3 @@ history.json
 
 #sqLite
 *.sqLite3
-
-.pre-commit-config.yaml
-pyproject.toml
