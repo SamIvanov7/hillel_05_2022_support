@@ -1,5 +1,6 @@
 
 # Project: Support application
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pw?label=Python%20)![PyPI](https://img.shields.io/pypi/v/django?color=919&label=Django)
 
 Online support service for users which organizes quick and comfortable connection 
 specialists of service with users issues.
