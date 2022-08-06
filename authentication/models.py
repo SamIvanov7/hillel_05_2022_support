@@ -6,6 +6,11 @@ from django.utils import timezone
 
 from shared.django import TimeStampMixin
 
+DEFAULT_ROLES = {
+    "admin": 1,
+    "user": 2,
+}
+
 
 class CustomUserManager(UserManager):
     """custom user manager"""
@@ -24,18 +29,22 @@ class CustomUserManager(UserManager):
         return user
 
     def create_superuser(self, email: str, username: Optional[str] = None, password: Optional[str] = None, **kwargs):
-        super_user_payload: dict = {
+        superuser_payload: dict = kwargs | {
             "is_superuser": True,
             "is_active": True,
             "is_staff": True,
+            "role_id": DEFAULT_ROLES["admin"],
         }
-        return self.create_user(email, username, password, **super_user_payload)
+        return self.create_user(email, username, password, **superuser_payload)
 
 
 class Role(TimeStampMixin):
     """user's Role which is used for giving permissions"""
 
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
@@ -52,7 +61,13 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
 
-    # role = models.ForeignKey(null=True, default=)
+    role = models.ForeignKey(
+        Role,
+        null=True,
+        default=DEFAULT_ROLES["user"],
+        on_delete=models.SET_NULL,
+        related_name="users",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
