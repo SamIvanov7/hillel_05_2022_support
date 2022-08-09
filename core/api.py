@@ -12,7 +12,10 @@ User = get_user_model()
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        exclude = ["created_at", "updated_at"]
+        exclude = [
+            "created_at",
+            "updated_at",
+        ]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,7 +25,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id",
-            "username" "email",
+            "username",
+            "email",
             "role",
             "first_name",
             "last_name",
@@ -37,13 +41,28 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ["id", "theme", "description", "operator", "client", "resolved", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "theme",
+            "description",
+            "operator",
+            "client",
+            "resolved",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class TicketLightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ["id", "theme", "resolved", "operator", "client"]
+        fields = [
+            "id",
+            "theme",
+            "resolved",
+            "operator",
+            "client",
+        ]
 
 
 @api_view(["GET"])
