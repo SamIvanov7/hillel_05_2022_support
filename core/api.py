@@ -1,13 +1,37 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.request import Request
+from django.http import HttpResponse
+import datetime
 
 from authentication.models import Role
 from core.models import Ticket
 
 User = get_user_model()
 
+def user_as_dict(user: User) -> dict:
+    return {
+        "username": user.username,
+        "email": user.email,
+        "phone": user.phone,
+        "first_name": user.phone,
+        "last_name": user.phone,
+        "age": user.phone,
+    }
+
+
+def ticket_as_dict(ticket: Ticket) -> dict:
+    return {
+        "id": ticket.id,  # type: ignore
+        "theme": ticket.theme,
+        "description": ticket.description,
+        "operator": user_as_dict(ticket.operator),
+        "resolved": ticket.resolved,
+        "created_at": ticket.created_at,
+        "updated_at": ticket.updated_at,
+    }
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,16 +88,19 @@ class TicketLightSerializer(serializers.ModelSerializer):
             "client",
         ]
 
+class TicketViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer(queryset, many=True).data
+    
 
 @api_view(["GET"])
 def get_all_tickets(request):
-    tickets = Ticket.objects.all()
-    data = TicketLightSerializer(tickets, many=True).data
-    return Response(data=data)
-
+    result = TicketViewSet.serializer_class
+    return Response(data=result)
 
 @api_view(["GET"])
 def get_ticket(request, id_: int):
     tickets = Ticket.objects.get(id=id_)
-    data = TicketSerializer(tickets).data
-    return Response(data=data)
+    result = TicketSerializer(tickets).data
+    return Response(data=result)
+
