@@ -38,6 +38,5 @@ jobs:
         run: |
           pipenv run flake8 ./
       - name: Run formatting check
-        run: |
-          pipenv run black ./ 
+        run: | 
           pipenv run isort --check-only ./
