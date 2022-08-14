@@ -1,80 +1,75 @@
-from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
-from authentication.models import Role
 from core.models import Ticket
-
-User = get_user_model()
-
-
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        exclude = [
-            "created_at",
-            "updated_at",
-        ]
+from core.serializers import (
+    TicketLightSerializer,
+    TicketPutSerializer,
+    TicketSerializer,
+)
 
 
-class UserSerializer(serializers.ModelSerializer):
-    role = RoleSerializer()
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "username",
-            "email",
-            "role",
-            "first_name",
-            "last_name",
-            "age",
-            "phone",
-        ]
-
-
-class TicketSerializer(serializers.ModelSerializer):
-    operator = UserSerializer()
-    client = UserSerializer()
-
-    class Meta:
-        model = Ticket
-        fields = [
-            "id",
-            "theme",
-            "description",
-            "operator",
-            "client",
-            "resolved",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class TicketLightSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        fields = [
-            "id",
-            "theme",
-            "resolved",
-            "operator",
-            "client",
-        ]
-
-
-@api_view(["GET"])
+@api_view(["GET", "POST", "DELETE"])
 def get_all_tickets(request):
-    tickets = Ticket.objects.all()
-    result = TicketLightSerializer(tickets, many=True).data
 
-    return Response(data=result)
+    # GET list of tickets, POST a new ticket, DELETE all tickets
+
+    if request.method == "GET":
+        tickets = Ticket.objects.all()
+
+        # search by theme
+        theme = request.query_params.get("theme", None)
+        if theme is not None:
+            tickets = tickets.filter(theme_icontains=theme)
+
+        ticket_serializer = TicketLightSerializer(tickets, many=True).data
+        return Response(data=ticket_serializer)
+
+    # Create ticket
+    elif request.method == "POST":
+        ticket_data = JSONParser().parse(request)
+        ticket_serializer = TicketLightSerializer(data=ticket_data)
+        if ticket_serializer.is_valid():
+            ticket_serializer.save()
+            return Response(ticket_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Delete all tickets
+    elif request.method == "DELETE":
+        ticket_count = Ticket.objects.all().delete()
+        return Response(
+            {"message": "{} Tickets were deleted successfully!".format(ticket_count[0])},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
-@api_view(["GET"])
+@api_view(["GET", "PUT", "DELETE"])
 def get_ticket(request, id_: int):
-    tickets = Ticket.objects.get(id=id_)
-    result = TicketSerializer(tickets).data
-    return Response(data=result)
+
+    # Search ticket by id
+    # GET / PUT / DELETE ticket
+
+    try:
+        ticket = Ticket.objects.get(id=id_)
+    except Ticket.DoesNotExist:
+        return Response({"message": "The ticket does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get ticket
+    if request.method == "GET":
+        ticket_serializer = TicketSerializer(ticket)
+        return Response(ticket_serializer.data)
+
+    # Update ticket's theme & description
+    elif request.method == "PUT":
+        ticket_serializer = TicketPutSerializer(ticket, data=request.data)
+        if ticket_serializer.is_valid():
+            ticket_serializer.save()
+            return Response(ticket_serializer.data)
+        return Response(ticket_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Delete ticket
+    elif request.method == "DELETE":
+        ticket.delete()
+        return Response({"message": "Ticket was deleted succefully"}, status=status.HTTP_204_NO_CONTENT)
