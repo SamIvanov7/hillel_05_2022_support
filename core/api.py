@@ -14,7 +14,7 @@ from core.serializers import (
 @api_view(["GET", "POST", "DELETE"])
 def get_all_tickets(request):
 
-    # GET list of tickets, POST a new ticket, DELETE all tickets
+    # GET list of tickets, POST new ticket, DELETE all tickets
 
     if request.method == "GET":
         tickets = Ticket.objects.all()
