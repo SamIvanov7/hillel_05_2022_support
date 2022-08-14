@@ -22,7 +22,7 @@ def get_all_tickets(request):
         # search by theme
         theme = request.query_params.get("theme", None)
         if theme is not None:
-            tickets = tickets.filter(theme_icontains=theme)
+            tickets = tickets.filter(theme__icontains=theme)
 
         ticket_serializer = TicketLightSerializer(tickets, many=True).data
         return Response(data=ticket_serializer)
