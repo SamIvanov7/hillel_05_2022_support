@@ -1,47 +1,11 @@
-name: Testing code quality
-
+name: black-action
 on: [push, pull_request]
-
 jobs:
-  build: 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.10']   
-
-    runs-on: ubuntu-latest 
-
+  linter_name:
+    name: runner / black formatter
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-    
-      - uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }} 
-      
-      - name: Install pipenv
-        run: |
-          python -m pip install --upgrade pipenv wheel
-          
-      - id: cache-pipenv
-        uses: actions/cache@v3
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-
-      - name: Install dependencies
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        run: |
-          pipenv install --dev
-                    
-      - name: Run linter
-        run: |
-          pipenv run flake8 ./
-      - name: Run formatting check
-        run: | 
-          pipenv run isort --check-only ./
-      - name: runner / black formatter
-        uses: actions/checkout@v2
-        uses: datadog/action-py-black-formatter@v2.1
+      - uses: actions/checkout@v2
+      - uses: datadog/action-py-black-formatter@v2.1
         with:
           check_mode: "true"
