@@ -40,5 +40,9 @@ jobs:
       - name: Run formatting check
         run: | 
           pipenv run isort --check-only ./
-      - name: Run formatter black
-        run: pipenv run black .
+      - name: runner / black formatter
+        steps:
+          - uses: actions/checkout@v2
+          - uses: datadog/action-py-black-formatter@v2.1
+            with:
+              check_mode: "true"
