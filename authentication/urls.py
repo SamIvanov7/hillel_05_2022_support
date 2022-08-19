@@ -6,4 +6,8 @@ from authentication.api import login_APIView, registration_APIView, update_APIVi
 router = DefaultRouter()
 
 app_name = "authentication"
-urlpatterns = [path("user", update_APIView), path("users/", registration_APIView), path("users/login/", login_APIView)]
+urlpatterns = [
+    path("update/", update_APIView),
+    path("registration/", registration_APIView),
+    path("login/", login_APIView),
+]
