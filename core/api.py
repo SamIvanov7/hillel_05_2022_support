@@ -1,6 +1,7 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from core.models import Ticket
@@ -11,15 +12,22 @@ from core.serializers import (
 )
 
 
+class TicketPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.method == "GET":
+            return True
+        return bool(request.user and request.user.is_authenticated)
+
+
 @api_view(["GET", "POST", "DELETE"])
+@permission_classes([TicketPermission])
 def get_all_tickets(request):
 
     # GET list of tickets, POST new ticket, DELETE all tickets
 
     if request.method == "GET":
         tickets = Ticket.objects.all()
-
-        # search by theme
+        # search by themeZ
         theme = request.query_params.get("theme", None)
         if theme is not None:
             tickets = tickets.filter(theme__icontains=theme)
@@ -46,6 +54,7 @@ def get_all_tickets(request):
 
 
 @api_view(["GET", "PUT", "DELETE"])
+@permission_classes([TicketPermission])
 def get_ticket(request, id_: int):
 
     # Search ticket by id
@@ -60,9 +69,8 @@ def get_ticket(request, id_: int):
     if request.method == "GET":
         ticket_serializer = TicketSerializer(ticket)
         return Response(ticket_serializer.data)
-
     # Update ticket's theme & description
-    elif request.method == "PUT":
+    if request.method == "PUT":
         ticket_serializer = TicketPutSerializer(ticket, data=request.data)
         if ticket_serializer.is_valid():
             ticket_serializer.save()
