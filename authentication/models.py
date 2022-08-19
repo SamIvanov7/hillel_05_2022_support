@@ -92,6 +92,12 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     def __str__(self) -> str:
         return self.email
 
+    def get_full_name(self):
+        return self.first_name + self.last_name
+
+    def get_short_name(self):
+        return self.first_name
+
     @property
     def token(self):
         return self._generate_jwt_token()
