@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
 from typing import Optional
 
+import jwt
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.db import models
 from django.utils import timezone
@@ -16,9 +19,9 @@ class CustomUserManager(UserManager):
     """custom user manager"""
 
     def create_user(self, email, username=None, password=None, **kwargs):
-        if not email:
+        if email is None:
             raise ValueError("Email field is requiered.")
-        if not password:
+        if password is None:
             raise ValueError("Password field is requiered.")
 
         email = self.normalize_email(email)
@@ -85,3 +88,17 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     class Meta:
         # db_table = "users"
         verbose_name_plural = "Users"
+
+    def __str__(self) -> str:
+        return self.email
+
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        dt = datetime.now() + timedelta(days=1)
+
+        token = jwt.encode({"id": self.pk, "exp": int(dt.strftime("%s"))}, settings.SECRET_KEY, algorithm="HS256")
+
+        return token.decode("utf-8")
