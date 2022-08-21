@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -49,6 +51,20 @@ class TicketSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, attrs: dict) -> dict:
+        theme = attrs.get("theme")
+
+        if not theme:
+            return attrs
+
+        data = Ticket.objects.value("theme")
+
+        for element in chain.from_iterable(data):
+            if element == theme:
+                raise ValueError("This ticket is already in database")
+
+        return attrs
 
 
 class TicketLightSerializer(serializers.ModelSerializer):
