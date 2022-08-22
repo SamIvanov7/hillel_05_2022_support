@@ -86,3 +86,17 @@ class TicketPutSerializer(serializers.ModelSerializer):
             "theme",
             "description",
         ]
+
+    def validate(self, attrs: dict) -> dict:
+        theme = attrs.get("theme")
+
+        if not theme:
+            return attrs
+
+        data = Ticket.objects.value("theme")
+
+        for element in chain.from_iterable(data):
+            if element == theme:
+                raise ValueError("This ticket is already in database")
+
+        return attrs
