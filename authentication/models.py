@@ -1,8 +1,5 @@
-from datetime import datetime, timedelta
 from typing import Optional
 
-import jwt
-from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.db import models
 from django.utils import timezone
@@ -60,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     age = models.PositiveSmallIntegerField(null=True, default=2)
-    phone = models.CharField(max_length=13, null=True)
+    phone = models.CharField(max_length=13, unique=True)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -82,6 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     objects = CustomUserManager()
 
     EMAIL_FIELD = "email"
+
     USERNAME_FIELD = EMAIL_FIELD
     REQUIRED_FIELDS = []
 
@@ -97,14 +95,3 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
 
     def get_short_name(self):
         return self.first_name
-
-    @property
-    def token(self):
-        return self._generate_jwt_token()
-
-    def _generate_jwt_token(self):
-        dt = datetime.now() + timedelta(days=1)
-
-        token = jwt.encode({"id": self.pk, "exp": int(dt.strftime("%s"))}, settings.SECRET_KEY, algorithm="HS256")
-
-        return token

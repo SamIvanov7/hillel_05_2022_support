@@ -1,13 +1,8 @@
-from django.urls import path
-from rest_framework.routers import DefaultRouter
+# from django.urls import path
 
-from authentication.api import login_APIView, registration_APIView, update_APIView
+# from authentication.api import UserDetailApiView, UserRetrieveUpdateAPIView
 
-router = DefaultRouter()
-
-app_name = "authentication"
-urlpatterns = [
-    path("update/", update_APIView),
-    path("registration/", registration_APIView),
-    path("login/", login_APIView),
-]
+# app_name = "authentication"
+# urlpatterns = [
+#     path("user", UserRetrieveUpdateAPIView.as_view()),
+#     path("profile/<int:pk>", UserDetailApiView.as_view(), name="profile"),

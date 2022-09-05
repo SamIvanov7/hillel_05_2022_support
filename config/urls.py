@@ -1,13 +1,10 @@
 from django.contrib import admin
 from django.urls import include, path
 
-#  from core.api import router
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("users/", include("authentication.urls", namespace="authentication")),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
     path("tickets/", include("core.urls")),
     path("exchangerates/", include("exchangerates.urls")),
-    # path('', include(router.urls)),
-    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
