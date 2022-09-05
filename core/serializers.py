@@ -93,10 +93,16 @@ class TicketPutSerializer(serializers.ModelSerializer):
         if not theme:
             return attrs
 
-        data = Ticket.objects.value("theme")
+        data = Ticket.objects.values_list("theme")
 
         for element in chain.from_iterable(data):
             if element == theme:
                 raise ValueError("This ticket is already in database")
 
         return attrs
+
+
+class TicketAssignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["operator"]

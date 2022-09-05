@@ -1,7 +1,8 @@
 from django.urls import path
 
-from core.api import get_all_tickets, get_ticket
+from core.api import GetTicketsList, TicketRetrieveAPI
 
-# urls
-
-urlpatterns = [path("", get_all_tickets), path("<int:id_>/", get_ticket)]
+urlpatterns = [
+    path("", GetTicketsList.as_view()),
+    path("<int:id>/", TicketRetrieveAPI.as_view()),
+]
