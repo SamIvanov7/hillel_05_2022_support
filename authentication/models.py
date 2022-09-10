@@ -4,12 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 from django.db import models
 from django.utils import timezone
 
+from config.constants import DEFAULT_ROLES
 from shared.django import TimeStampMixin
-
-DEFAULT_ROLES = {
-    "admin": 1,
-    "user": 2,
-}
 
 
 class CustomUserManager(UserManager):
@@ -66,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     role = models.ForeignKey(
         Role,
         null=True,
-        default=DEFAULT_ROLES["user"],
+        default=2,
         on_delete=models.SET_NULL,
         related_name="users",
     )
