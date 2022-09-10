@@ -18,6 +18,8 @@ django-dotenv = "*"
 requests = "==2.28.1"
 djoser = "==2.1.0"
 djangorestframework-simplejwt = "*"
+django-filter = "*"
+drf-url-filters = "*"
 
 [dev-packages]
 django-stubs = "==1.12.0"
