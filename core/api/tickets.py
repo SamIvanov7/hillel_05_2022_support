@@ -40,7 +40,7 @@ class GetTicketsListAPI(CustomAPIView):
     """
     API Endpoint to List Tickets
     METHODS: GET, POST
-    Available Query Params (For Admins Only!) : [
+    Available Query Params (For Admins Only!) :
         tickets?empty=true, # returns all tickets without Operator
         tickets?empty=false, # returns all tickets without Operator + CurrentOperator
     """
