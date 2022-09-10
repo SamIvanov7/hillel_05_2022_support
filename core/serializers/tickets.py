@@ -106,3 +106,8 @@ class TicketAssignSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["operator"]
+
+    def validate(self, attrs: dict) -> dict:
+        # NOTE: Add current user to the `attrs` object
+        attrs["operator"] = self.context["request"].user
+        return attrs

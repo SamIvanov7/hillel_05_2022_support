@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+from config.constants import DEFAULT_RESOLVED
 from shared.django.models import TimeStampMixin
 
 
@@ -8,7 +9,7 @@ class Ticket(TimeStampMixin):
 
     theme = models.CharField(max_length=255)
     description = models.TextField()
-    resolved = models.BooleanField(default=False)
+    resolved = models.BooleanField(default=DEFAULT_RESOLVED["false"])
     client = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

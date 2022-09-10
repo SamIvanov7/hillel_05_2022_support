@@ -1,16 +1,23 @@
 from django.db.models import Q
-from rest_framework import permissions, status
-from rest_framework.generics import RetrieveAPIView
+from rest_framework import status
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.license import IsAuthenticatedAndNotAdmin, IsAuthenticatedAndOwner
+from config.constants import DEFAULT_ROLES
+from core.license import (
+    IsAuthenticatedAndNotAdmin,
+    IsAuthenticatedAndOwner,
+    OperatorOnly,
+)
 from core.models import Ticket
 from core.serializers import (
+    TicketAssignSerializer,
     TicketLightSerializer,
     TicketPutSerializer,
     TicketSerializer,
 )
+from core.services import TicketsCRUD
 
 
 class CustomAPIView(APIView):
@@ -29,12 +36,18 @@ class CustomAPIView(APIView):
                 self.permission_denied(request, message=getattr(permission, "message", None))
 
 
-class GetTicketsList(CustomAPIView):
+class GetTicketsListAPI(CustomAPIView):
     """
     API Endpoint to List Tickets
     METHODS: GET, POST
+    Available Query Params (For Admins Only!) : [
+        tickets?empty=true, # returns all tickets without Operator
+        tickets?empty=false, # returns all tickets without Operator + CurrentOperator
     """
 
+    queryset = Ticket.objects.all()
+    lookup_field = ("id",)
+    lookup_url_kwarg = ("id",)
     permission_classes = {
         "get": [IsAuthenticatedAndOwner],
         "post": [IsAuthenticatedAndNotAdmin],
@@ -43,9 +56,17 @@ class GetTicketsList(CustomAPIView):
     def get(self, request):
         user = self.request.user
         if self.request.user.is_staff:
-            tickets = Ticket.objects.filter(Q(operator=None) | Q(operator=user))
-            serializer = TicketLightSerializer(tickets, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            empty = request.query_params.get("empty", None)
+            if empty == "false":
+                tickets = Ticket.objects.filter(Q(operator=user) | Q(operator=None))
+                serializer = TicketLightSerializer(tickets, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            if empty == "true":
+                tickets = Ticket.objects.filter(operator=None)
+                ticket_serializer = TicketLightSerializer(tickets, many=True)
+                return Response(ticket_serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             tickets = Ticket.objects.filter(client=user)
             serializer = TicketLightSerializer(tickets, many=True)
@@ -62,21 +83,47 @@ class GetTicketsList(CustomAPIView):
 
 
 class TicketRetrieveAPI(RetrieveAPIView):
-    queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     lookup_field = "id"
     lookup_url_kwarg = "id"
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Ticket.objects.filter(client=self.request.user)
+        user = self.request.user
+        if user.role.id == DEFAULT_ROLES["user"]:
+            return Ticket.objects.filter(client=user)
+        return Ticket.objects.filter(operator=user)
 
 
-# class TicketPermission(permissions.BasePermission):
-#     def has_permission(self, request, view):
-#         if request.method == "GET":
-#             return True
-#         return bool(request.user and request.user.is_authenticated)
+class TicketAssignAPI(UpdateAPIView):
+    http_method_names = ["patch"]
+    serializer_class = TicketAssignSerializer
+    permission_classes = [OperatorOnly]
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+
+    def get_queryset(self):
+        return Ticket.objects.filter(operator=None)
+
+
+class TicketResolveAPI(UpdateAPIView):
+    http_method_names = ["patch"]
+    permission_classes = [OperatorOnly]
+    serializer_class = TicketLightSerializer
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+
+    def get_queryset(self):
+        user = self.request.user
+        return Ticket.objects.filter(operator=user)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance = TicketsCRUD.change_resolved_status(instance)
+
+        # serializer = self.serializer_class(instance)
+        serializer = self.get_serializer(instance)
+
+        return Response(serializer.data)
 
 
 # class MyViewSet(viewsets.ModelViewSet):
@@ -86,20 +133,6 @@ class TicketRetrieveAPI(RetrieveAPIView):
 #         self.permission_classes = (CustomPermissions)
 #         return super(self.__class__, self).update(request, *args, **kwargs)
 
-
-# class GetAndCreateTickets(ListAPIView, CreateAPIView, IsAuthenticatedAndOwner):
-#     permission_classes = [IsAuthenticatedAndOwner]
-#     def get(self, request, format=None):
-#         queryset = Ticket.objects.all()
-#         serializer = TicketLightSerializer(queryset, many=True).data
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer =TicketLightSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(["GET", "POST", "DELETE"])
 # @permission_classes([TicketPermission])
@@ -111,8 +144,6 @@ class TicketRetrieveAPI(RetrieveAPIView):
 #         tickets = Ticket.objects.all()
 #         # search by themeZ
 #         theme = request.query_params.get("theme", None)
-#         if theme is not None:
-#             tickets = tickets.filter(theme__icontains=theme)
 
 #         ticket_serializer = TicketLightSerializer(tickets, many=True).data
 #         return Response(data=ticket_serializer)
