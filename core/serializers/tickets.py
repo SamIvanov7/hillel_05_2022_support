@@ -98,8 +98,10 @@ class TicketPutSerializer(serializers.ModelSerializer):
         for element in chain.from_iterable(data):
             if element == theme:
                 raise ValueError("This ticket is already in database")
-
         return attrs
+
+    def new_method(self, attrs):
+        attrs["client"] = self.context["request"].user
 
 
 class TicketAssignSerializer(serializers.ModelSerializer):
@@ -110,4 +112,3 @@ class TicketAssignSerializer(serializers.ModelSerializer):
     def validate(self, attrs: dict) -> dict:
         # NOTE: Add current user to the `attrs` object
         attrs["operator"] = self.context["request"].user
-        return attrs

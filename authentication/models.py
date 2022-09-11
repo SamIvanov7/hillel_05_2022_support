@@ -62,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampMixin):
     role = models.ForeignKey(
         Role,
         null=True,
-        default=2,
+        default=DEFAULT_ROLES["user"],
         on_delete=models.SET_NULL,
         related_name="users",
     )

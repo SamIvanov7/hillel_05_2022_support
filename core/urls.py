@@ -1,15 +1,23 @@
-from django.urls import path, re_path
+from django.urls import path
 
-from core.api import (
+from core.api.comments import CommentCreateAPI, CommentsListAPI
+from core.api.tickets import (
     GetTicketsListAPI,
     TicketAssignAPI,
     TicketResolveAPI,
     TicketRetrieveAPI,
 )
 
-urlpatterns = [
-    re_path(r"", GetTicketsListAPI.as_view()),
+tickets_urls = [
+    path(r"", GetTicketsListAPI.as_view()),
     path("<int:id>/", TicketRetrieveAPI.as_view()),
     path("<int:id>/assign/", TicketAssignAPI.as_view()),
     path("<int:id>/resolve/", TicketResolveAPI.as_view()),
 ]
+
+comments_urls = [
+    path("<int:ticket_id>/comments/", CommentsListAPI.as_view()),
+    path("comment/", CommentCreateAPI.as_view()),
+]
+
+urlpatterns = tickets_urls + comments_urls

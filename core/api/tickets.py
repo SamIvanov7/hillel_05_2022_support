@@ -2,9 +2,9 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from config.constants import DEFAULT_ROLES
+from core.custom_generics import CustomAPIView
 from core.license import (
     IsAuthenticatedAndNotAdmin,
     IsAuthenticatedAndOwner,
@@ -20,22 +20,6 @@ from core.serializers import (
 from core.services import TicketsCRUD
 
 
-class CustomAPIView(APIView):
-    def get_permissions(self):
-        # Instances and returns the dict of permissions that the view requires.
-        return {
-            key: [permission() for permission in permissions] for key, permissions in self.permission_classes.items()
-        }
-
-    def check_permissions(self, request):
-        # Gets the request method and the permissions dict, and checks the permissions defined in the key matching
-        # the method.
-        method = request.method.lower()
-        for permission in self.get_permissions()[method]:
-            if not permission.has_permission(request, self):
-                self.permission_denied(request, message=getattr(permission, "message", None))
-
-
 class GetTicketsListAPI(CustomAPIView):
     """
     API Endpoint to List Tickets
@@ -46,8 +30,6 @@ class GetTicketsListAPI(CustomAPIView):
     """
 
     queryset = Ticket.objects.all()
-    lookup_field = ("id",)
-    lookup_url_kwarg = ("id",)
     permission_classes = {
         "get": [IsAuthenticatedAndOwner],
         "post": [IsAuthenticatedAndNotAdmin],

@@ -32,7 +32,6 @@ class Ticket(TimeStampMixin):
 class Comment(TimeStampMixin):
 
     text = models.TextField()
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
