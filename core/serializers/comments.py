@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Comment
+from core.models import Comment, Ticket
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -12,10 +12,17 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ["text", "ticket"]
+        fields = ["text"]
+        read_only_fields = ["ticket", "user", "prev_comment"]
 
     def validate(self, attrs: dict) -> dict:
         request = self.context["request"]
-        attrs["ticket"] = request.parser_context["kwargs"]["ticket_id"]
+        ticket_id: int = request.parser_context["kwargs"]["ticket_id"]
+        ticket: Ticket = ticket.objects.get(id=ticket_id)
+        attrs["ticket"] = ticket
         attrs["user"] = request.user
         return attrs
+
+    def create(self, validated_data):
+        instance = Comment.objects.create(**validated_data)
+        return instance
