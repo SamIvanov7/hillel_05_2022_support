@@ -15,5 +15,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = ["text", "ticket"]
 
     def validate(self, attrs: dict) -> dict:
-        attrs["user"] = self.context["request"].user
+        request = self.context["request"]
+        attrs["ticket"] = request.parser_context["kwargs"]["ticket_id"]
+        attrs["user"] = request.user
         return attrs
