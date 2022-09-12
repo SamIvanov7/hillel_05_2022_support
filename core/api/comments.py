@@ -31,7 +31,7 @@ class CommentCreateAPI(CustomAPIView):
         "post": [IsAuthenticatedAndOwner],
     }
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             obj = serializer.save()
