@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-tltn!nbtr@$#k$@6-s9g620j7o0g&)i&efdv$d169!&)d-=j*c"
 DEBUG = True
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["localhost"]
 
 # Application definition
 DJANGO_APPS = [

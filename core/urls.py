@@ -17,7 +17,7 @@ tickets_urls = [
 
 comments_urls = [
     path("<int:ticket_id>/comments/", CommentsListAPI.as_view()),
-    path("comment/", CommentCreateAPI.as_view()),
+    path("<int:ticket_id>/comments/create/", CommentCreateAPI.as_view()),
 ]
 
 urlpatterns = tickets_urls + comments_urls
