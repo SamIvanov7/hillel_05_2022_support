@@ -17,8 +17,28 @@ $pip instal pipenv
 ```bash
 pre-commit install
 ```
+# Run application with Docker
 
-## Description 
+```bash
+docker build -t support_django . -f Dockerfile
+docker run -p 8000:80 -v $PWD:/app/ --rm -it support_django
+```
+# Run application with Docker-compose
+
+docker compose build
+docker compose up -d
+
+# Dump postgress DB
+
+docker compose exec postgres pg_dump -U support support > db-backup-$(date +%d-%m-%y).sql
+
+# Load postgress DB
+
+docker compose exec -T postgres psql -U support support < db-backup-25-09-22.sql
+
+You have to change db-backup-25-09-22.sql to your current DB dump file name
+
+## Description
 
 #### Authentication
 - Have the panel of administration with database of users. Can sign up, sign in/out. 
@@ -32,6 +52,19 @@ App can save information in history file and make output respose in json format 
 
 #### Shared
 - contains the necessary models that each module of our project refers to. But module "shared" will never refers to any of our project's modules
+
+
+##### Other utilits
+
+Pipfile - this file contains information for the dependencies of the project. Pipenv uses this file to define all required tools, utils, and modules for this env. Here we separate dev packages and default so that we can use this file for dev and prod.
+
+Pipfile.lock - This file declares all dependencies (from Pipfile) of the project, their latest available versions, and the current hashes for the downloaded files.
+
+.isort.cfg - we use this file to configure isort behavior. In my case, I exclude migrations from the checking.
+
+.flake8 - we use this file to configure flake8 behavior.
+
+.gitignore - here we specifie files that git shoud ignore.
 
 
 ## Files description:

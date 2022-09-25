@@ -20,6 +20,7 @@ djoser = "==2.1.0"
 djangorestframework-simplejwt = "*"
 django-filter = "*"
 drf-url-filters = "*"
+psycopg2-binary = "==2.9.3"
 
 [dev-packages]
 django-stubs = "==1.12.0"
