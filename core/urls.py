@@ -1,12 +1,8 @@
 from django.urls import path
 
 from core.api.comments import CommentCreateAPI, CommentsListAPI
-from core.api.tickets import (
-    GetTicketsListAPI,
-    TicketAssignAPI,
-    TicketResolveAPI,
-    TicketRetrieveAPI,
-)
+from core.api.tickets import (GetTicketsListAPI, TicketAssignAPI,
+                              TicketResolveAPI, TicketRetrieveAPI)
 
 tickets_urls = [
     path(r"", GetTicketsListAPI.as_view()),
