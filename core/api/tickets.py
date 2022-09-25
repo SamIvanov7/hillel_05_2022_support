@@ -5,11 +5,9 @@ from rest_framework.response import Response
 
 from config.constants import DEFAULT_ROLES
 from core.custom_generics import CustomAPIView
-from core.license import (IsAuthenticatedAndNotAdmin, IsAuthenticatedAndOwner,
-                          OperatorOnly)
+from core.license import IsAuthenticatedAndNotAdmin, IsAuthenticatedAndOwner, OperatorOnly
 from core.models import Ticket
-from core.serializers import (TicketAssignSerializer, TicketLightSerializer,
-                              TicketPutSerializer, TicketSerializer)
+from core.serializers import TicketAssignSerializer, TicketLightSerializer, TicketPutSerializer, TicketSerializer
 from core.services import TicketsCRUD
 
 

@@ -8,8 +8,8 @@ specialists of service with users issues.
 ## Setup the Environment
 #### Install pipenv
 
-```
-$pip instal pipenv
+```bash
+$pip install pipenv
 ```
 
 #### Install [pre-commit hooks](https://pre-commit.com/#install)
@@ -17,28 +17,28 @@ $pip instal pipenv
 ```bash
 pre-commit install
 ```
-# Run application with Docker
+## Run application with Docker
 
 ```bash
 docker build -t support_django . -f Dockerfile
 docker run -p 8000:80 -v $PWD:/app/ --rm -it support_django
 ```
-# Run application with Docker-compose
-
+## Run application with Docker-compose
+```bash
 docker compose build
 docker compose up -d
-
-# Dump postgress DB
-
+```
+## Dump postgress DB
+```bash
 docker compose exec postgres pg_dump -U support support > db-backup-$(date +%d-%m-%y).sql
-
-# Load postgress DB
-
+```
+## Load postgress DB
+```bash
 docker compose exec -T postgres psql -U support support < db-backup-25-09-22.sql
-
+```
 You have to change db-backup-25-09-22.sql to your current DB dump file name
 
-## Description
+# Description
 
 #### Authentication
 - Have the panel of administration with database of users. Can sign up, sign in/out. 
