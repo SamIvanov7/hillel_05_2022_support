@@ -11,3 +11,5 @@ history.json
 #sqLite
 db.sqLite3
 *.sql
+
+.env
