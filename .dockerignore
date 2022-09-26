@@ -1,0 +1,7 @@
+materials/
+docs/
+.idea/
+.vscode/
+.pre-committ-config.yaml
+*.md
+.DS_store

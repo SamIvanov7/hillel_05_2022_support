@@ -9,4 +9,5 @@ __pycache__/
 history.json
 
 #sqLite
-*.sqLite3
+db.sqLite3
+*.sql

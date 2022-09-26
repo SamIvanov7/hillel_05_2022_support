@@ -4,6 +4,7 @@ services:
   postgres:
     image: postgres:13.3
     container_name: support_postgres
+    env_file: ".env"
     ports:
       - "5432:5432"
     environment:
@@ -14,9 +15,13 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   django:
-    build: .
+    build:
+      context: .
+      args:
+        - PIPENV_EXTRA_ARGS=$PIPENV_EXTRA_ARGS
     image: support_django
     container_name: support_django
+    env_file: ".env"
     depends_on:
       - postgres
     ports:
