@@ -2,24 +2,28 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:13.3
+    image: postgres:latest
     container_name: support_postgres
     env_file: ".env"
     ports:
-      - "5432:5432"
+      - "5432:5433"
+    environment:
+      - POSTGRES_USER=support
+      - POSTGRES_PASSWORD=tiara3903
+      - POSTGRES_DB=support
     volumes:
       - pg_data:/var/lib/postgresql/data
 
   django:
-    depends_on:
-      - postgres
     build:
       context: .
       args:
         - PIPENV_EXTRA_ARGS=$PIPENV_EXTRA_ARGS
+    image: support_django
     container_name: support_django
-    image: support_django_2
     env_file: ".env"
+    depends_on:
+      - postgres
     ports:
       - "8000:80"
     volumes:

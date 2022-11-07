@@ -7,7 +7,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = "django-insecure-tltn!nbtr@$#k$@6-s9g620j7o0g&)i&efdv$d169!&)d-=j*c"
 DEBUG = strtobool(os.getenv("DJANGO_DEBUG", default="false"))
 ALLOWED_HOSTS = ["*"]
 
@@ -28,7 +28,6 @@ LOCAL_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "django_extensions",
     "rest_framework",
     # "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -37,6 +36,10 @@ THIRD_PARTY_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
+
+if DEBUG:
+    DEV_APPS = ["django_extensions"]
+    INSTALLED_APPS += DEV_APPS
 
 SITE_ID = 1
 
@@ -71,7 +74,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database mySqlite3
+# DatamySqlite3base
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.sqlite3",
@@ -80,12 +83,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # }
 
 # Postgres
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "postgres",
+#         "USER": "support",
+#         "PASSWORD": "support1234",
+#         "HOST": "localhost",
+#         "PORT": 5432,
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", default="support"),
         "USER": os.getenv("POSTGRES_USER", default="support"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="tiara3903"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="support1234"),
         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
         "PORT": int(os.getenv("POSTGRES_PORT", default="5432")),
     }

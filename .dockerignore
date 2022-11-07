@@ -5,3 +5,4 @@ docs/
 .pre-committ-config.yaml
 *.md
 .DS_store
+.env
