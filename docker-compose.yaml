@@ -16,9 +16,9 @@ services:
     build:
       context: .
       args:
-        - PIPENV_EXTRA_ARGS=$PIPENV_EXTRA_ARGS
+        - PIPENV_EXTRA_ARG=$PIPENV_EXTRA_ARG
     container_name: support_django
-    image: support_django_2
+    image: support_django
     env_file: ".env"
     ports:
       - "8000:80"

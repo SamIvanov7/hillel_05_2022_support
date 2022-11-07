@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 # Receive build arguments
-ARG PIPENV_EXTRA_ARGS
+ARG PIPENV_EXTRA_ARG
 
 
 # Change working directory
@@ -15,7 +15,7 @@ COPY ./ ./
 # Install deps
 RUN pip install pipenv \
     && pipenv sync \
-    && pipenv install --system --deploy --ignore-pipfile ${PIPENV_EXTRA_ARGS} 
+    && pipenv install --system --deploy --ignore-pipfile ${PIPENV_EXTRA_ARG} 
     
 
 CMD sleep 3 \
